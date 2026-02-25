@@ -23,6 +23,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Betting")
 	void ConfirmBet();
 
+	/** 다이얼을 돌려 수량을 변경합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Betting")
+	void AdjustQuantity(int32 Delta);
+
+	/** 주사위 숫자를 변경합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Betting")
+	void AdjustValue(int32 NewValue);
+
 	/** "거짓말!" 버튼 클릭 시 호출 */
 	UFUNCTION(BlueprintCallable, Category = "Betting")
 	void CallLiar();

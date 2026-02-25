@@ -14,17 +14,33 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	/** 베팅 확인 버튼 클릭 시 호출 */
+	UFUNCTION(BlueprintCallable, Category = "Betting")
+	void ConfirmBet();
+
+	/** 다이얼을 돌려 수량을 변경합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Betting")
+	void AdjustQuantity(int32 Delta);
+
+	/** 주사위 숫자를 변경합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Betting")
+	void AdjustValue(int32 NewValue);
+
 	/** 주사위 확인 시도 (쿨다운 포함) */
 	UFUNCTION(BlueprintCallable, Category = "GameFlow")
 	void RequestCheckDice();
 
-	/** 주사위 확인 종료 */
+	/** "거짓말!" 버튼 클릭 시 호출 */
 	UFUNCTION(BlueprintCallable, Category = "GameFlow")
 	void StopCheckingDice();
 
 	/** 서버에 주사위 확인 애니메이션 동기화 요청 */
 	UFUNCTION(Server, Reliable, Category = "GameFlow")
 	void Server_OnCheckDiceInteraction();
+
+	/** 모든 클라이언트에 주사위 확인 애니메이션 재생 알림 */
+	UFUNCTION(NetMulticast, Reliable, Category = "GameFlow")
+	void Multicast_PlayCheckDiceAnimation();
 
 	/** 서버에 베팅 요청 */
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GameFlow")
