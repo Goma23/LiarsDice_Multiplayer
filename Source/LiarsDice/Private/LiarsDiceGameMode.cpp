@@ -191,8 +191,49 @@ void ALiarsDiceGameMode::ResolveMatch()
 			}
 			else
 			{
-				// 다음 라운드 준비 (대기 후 섞기 단계로)
-				SetCurrentGameState(ELiarsDiceGameState::MixingDice);
+				// 약간의 대기(결과 확인 시간) 후 새 라운드 시작
+				FTimerHandle NewRoundTimer;
+				GetWorldTimerManager().SetTimer(NewRoundTimer, this, &ALiarsDiceGameMode::StartNewRound, 3.0f, false);
+			}
+		}
+	}
+}
+
+void ALiarsDiceGameMode::StartNewRound()
+{
+	SetCurrentGameState(ELiarsDiceGameState::MixingDice);
+	
+	RollDiceForAllPlayers();
+	
+	// 베팅 정보 초기화
+	if (ALiarsDiceGameState* GS = GetGameState<ALiarsDiceGameState>())
+	{
+		GS->CurrentBet = FLiarsBetInfo();
+	}
+
+	// 주사위 섞는 애니메이션 시간(2초) 후 베팅 라운드 진입
+	FTimerHandle BettingStartTimer;
+	GetWorldTimerManager().SetTimer(BettingStartTimer, [this]() {
+		SetCurrentGameState(ELiarsDiceGameState::BettingRound);
+	}, 2.0f, false);
+}
+
+void ALiarsDiceGameMode::RollDiceForAllPlayers()
+{
+	for (APlayerController* PC : JoinedPlayers)
+	{
+		if (ALiarsDicePlayerState* PS = PC->GetPlayerState<ALiarsDicePlayerState>())
+		{
+			PS->DiceValues.Empty();
+			for (int32 i = 0; i < PS->RemainingDiceCount; ++i)
+			{
+				PS->DiceValues.Add(FMath::RandRange(2, 6)); // 와일드카드 제외 기본 롤링
+			}
+			
+			// 룰상 1은 랜덤하게 섞일 수 있음 (위 코드는 2~6만 했으나 1~6이 맞음)
+			for (int32 i = 0; i < PS->DiceValues.Num(); ++i)
+			{
+				PS->DiceValues[i] = FMath::RandRange(1, 6);
 			}
 		}
 	}

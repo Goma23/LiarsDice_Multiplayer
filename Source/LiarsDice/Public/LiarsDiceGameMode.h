@@ -59,6 +59,12 @@ public:
 	/** 승패 판정 및 주사위 차감 처리 */
 	void ResolveMatch();
 
+	/** 새로운 라운드를 시작합니다. */
+	void StartNewRound();
+
+	/** 모든 플레이어의 주사위를 랜덤하게 설정합니다. */
+	void RollDiceForAllPlayers();
+
 	/** 미니게임 결과 집계 */
 	void ProcessMiniGameResults();
 
