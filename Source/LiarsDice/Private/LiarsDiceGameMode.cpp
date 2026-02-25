@@ -72,6 +72,67 @@ void ALiarsDiceGameMode::SetOrderAuthority(APlayerController* Winner)
 {
 	UE_LOG(LogTemp, Warning, TEXT("MiniGame Winner: %s. Awaiting direction choice."), *Winner->GetName());
 	// Winner 클라이언트에 방향 선택 UI(시계/반시계) 활성화 RPC 전송 로직 필요
+	
+	// 임시로 승자의 인덱스로 CurrentTurnIndex 초기화
+	if (ALiarsDiceGameState* GS = GetGameState<ALiarsDiceGameState>())
+	{
+		GS->CurrentTurnIndex = JoinedPlayers.IndexOfByKey(Winner);
+	}
+}
+
+void ALiarsDiceGameMode::HandleBet(APlayerController* Player, int32 Quantity, int32 Value)
+{
+	ALiarsDiceGameState* GS = GetGameState<ALiarsDiceGameState>();
+	if (!GS || GS->GameState != ELiarsDiceGameState::BettingRound) return;
+
+	// 현재 턴인 플레이어인지 확인
+	int32 PlayerIndex = JoinedPlayers.IndexOfByKey(Player);
+	if (PlayerIndex != GS->CurrentTurnIndex) return;
+
+	// 베팅 유효성 검사 (이전 베팅보다 갯수가 무조건 커야 함)
+	if (Quantity > GS->CurrentBet.Quantity && Value != 1)
+	{
+		GS->CurrentBet.Quantity = Quantity;
+		GS->CurrentBet.Value = Value;
+		GS->CurrentBet.Better = Player->GetPlayerState<APlayerState>();
+
+		UE_LOG(LogTemp, Warning, TEXT("Player %s placed bet: %d of %d"), *Player->GetName(), Quantity, Value);
+		
+		AdvanceTurn();
+	}
+}
+
+void ALiarsDiceGameMode::HandleLiar(APlayerController* Player)
+{
+	ALiarsDiceGameState* GS = GetGameState<ALiarsDiceGameState>();
+	if (!GS || GS->GameState != ELiarsDiceGameState::BettingRound) return;
+
+	// 현재 턴인 플레이어인지 확인
+	int32 PlayerIndex = JoinedPlayers.IndexOfByKey(Player);
+	if (PlayerIndex != GS->CurrentTurnIndex) return;
+
+	UE_LOG(LogTemp, Warning, TEXT("Player %s called LIAR!"), *Player->GetName());
+	
+	SetCurrentGameState(ELiarsDiceGameState::RevealResults);
+	// 결과 확인 로직(주사위 개수 세기) 호출 예정
+}
+
+void ALiarsDiceGameMode::AdvanceTurn()
+{
+	ALiarsDiceGameState* GS = GetGameState<ALiarsDiceGameState>();
+	if (!GS || JoinedPlayers.Num() == 0) return;
+
+	// 방향에 따라 다음 플레이어 결정
+	if (bClockwise)
+	{
+		GS->CurrentTurnIndex = (GS->CurrentTurnIndex + 1) % JoinedPlayers.Num();
+	}
+	else
+	{
+		GS->CurrentTurnIndex = (GS->CurrentTurnIndex - 1 + JoinedPlayers.Num()) % JoinedPlayers.Num();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("It's now Player %d's turn"), GS->CurrentTurnIndex);
 }
 
 void ALiarsDiceGameMode::Server_SetGameDirection_Implementation(bool bIsClockwise)

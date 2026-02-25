@@ -47,6 +47,15 @@ public:
 	/** 모든 플레이어를 계산된 위치로 재배치합니다. */
 	void RedistributePlayers();
 
+	/** 플레이어의 베팅 요청을 처리합니다. */
+	void HandleBet(APlayerController* Player, int32 Quantity, int32 Value);
+
+	/** 플레이어의 거짓말 선언 요청을 처리합니다. */
+	void HandleLiar(APlayerController* Player);
+
+	/** 다음 플레이어로 턴을 넘깁니다. */
+	void AdvanceTurn();
+
 	/** 미니게임 결과 집계 */
 	void ProcessMiniGameResults();
 

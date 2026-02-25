@@ -20,6 +20,14 @@ public:
 	UFUNCTION(Server, Reliable, Category = "GameFlow")
 	void Server_OnCheckDiceInteraction();
 
+	/** 서버에 베팅 요청 */
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GameFlow")
+	void Server_PlaceBet(int32 Quantity, int32 Value);
+
+	/** 서버에 거짓말 선언 요청 */
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GameFlow")
+	void Server_CallLiar();
+
 protected:
 	/** 상호작용 락 상태 */
 	bool bIsInteractionLocked;

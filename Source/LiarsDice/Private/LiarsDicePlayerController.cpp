@@ -26,6 +26,22 @@ void ALiarsDicePlayerController::Server_OnCheckDiceInteraction_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("Player %s is checking dice"), *GetName());
 }
 
+void ALiarsDicePlayerController::Server_PlaceBet_Implementation(int32 Quantity, int32 Value)
+{
+	if (ALiarsDiceGameMode* GM = GetWorld()->GetAuthGameMode<ALiarsDiceGameMode>())
+	{
+		GM->HandleBet(this, Quantity, Value);
+	}
+}
+
+void ALiarsDicePlayerController::Server_CallLiar_Implementation()
+{
+	if (ALiarsDiceGameMode* GM = GetWorld()->GetAuthGameMode<ALiarsDiceGameMode>())
+	{
+		GM->HandleLiar(this);
+	}
+}
+
 void ALiarsDicePlayerController::UnlockInteraction()
 {
 	bIsInteractionLocked = false;
