@@ -1,4 +1,5 @@
 #include "LiarsDicePlayerController.h"
+#include "LiarsDiceGameMode.h"
 #include "TimerManager.h"
 
 ALiarsDicePlayerController::ALiarsDicePlayerController()

@@ -135,6 +135,69 @@ void ALiarsDiceGameMode::AdvanceTurn()
 	UE_LOG(LogTemp, Warning, TEXT("It's now Player %d's turn"), GS->CurrentTurnIndex);
 }
 
+void ALiarsDiceGameMode::ResolveMatch()
+{
+	ALiarsDiceGameState* GS = GetGameState<ALiarsDiceGameState>();
+	if (!GS) return;
+
+	int32 BetQuantity = GS->CurrentBet.Quantity;
+	int32 BetValue = GS->CurrentBet.Value;
+	int32 TotalCount = 0;
+
+	// 모든 플레이어의 주사위 확인 (Replication 정보 활용)
+	for (APlayerController* PC : JoinedPlayers)
+	{
+		if (ALiarsDicePlayerState* PS = PC->GetPlayerState<ALiarsDicePlayerState>())
+		{
+			for (int32 DiceVal : PS->DiceValues)
+			{
+				// 1은 항상 와일드카드 (단, 베팅값이 1일 때는 제외하나 룰상 1은 직접 베팅 불가능)
+				if (DiceVal == BetValue || DiceVal == 1)
+				{
+					TotalCount++;
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Match Resolved: Bet %d of %d. Actual: %d"), BetQuantity, BetValue, TotalCount);
+
+	APlayerController* Loser = nullptr;
+	// 거짓말 선언 성공 여부 판정
+	if (TotalCount >= BetQuantity)
+	{
+		// 베팅이 진실임 -> 거짓말 선언한 사람(현재 턴 보유자)이 패배
+		Loser = JoinedPlayers[GS->CurrentTurnIndex];
+	}
+	else
+	{
+		// 베팅이 거짓임 -> 베팅한 사람(CurrentBet.Better)이 패배
+		if (GS->CurrentBet.Better)
+		{
+			Loser = Cast<APlayerController>(GS->CurrentBet.Better->GetOwner());
+		}
+	}
+
+	if (Loser)
+	{
+		if (ALiarsDicePlayerState* LoserPS = Loser->GetPlayerState<ALiarsDicePlayerState>())
+		{
+			LoserPS->RemainingDiceCount--;
+			UE_LOG(LogTemp, Warning, TEXT("Loser: %s. Remaining Dice: %d"), *Loser->GetName(), LoserPS->RemainingDiceCount);
+			
+			if (LoserPS->RemainingDiceCount <= 0)
+			{
+				SetCurrentGameState(ELiarsDiceGameState::GameOver);
+			}
+			else
+			{
+				// 다음 라운드 준비 (대기 후 섞기 단계로)
+				SetCurrentGameState(ELiarsDiceGameState::MixingDice);
+			}
+		}
+	}
+}
+
 void ALiarsDiceGameMode::Server_SetGameDirection_Implementation(bool bIsClockwise)
 {
 	bClockwise = bIsClockwise;

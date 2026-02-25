@@ -56,6 +56,9 @@ public:
 	/** 다음 플레이어로 턴을 넘깁니다. */
 	void AdvanceTurn();
 
+	/** 승패 판정 및 주사위 차감 처리 */
+	void ResolveMatch();
+
 	/** 미니게임 결과 집계 */
 	void ProcessMiniGameResults();
 
