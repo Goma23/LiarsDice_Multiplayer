@@ -41,8 +41,16 @@ void ALiarsDicePlayerController::StopCheckingDice()
 
 void ALiarsDicePlayerController::Server_OnCheckDiceInteraction_Implementation()
 {
-	// 서버에서 모든 클라이언트에 해당 플레이어의 컵 드는 애니메이션 멀티캐스트 알림 로직
+	// 서버에서 모든 클라이언트에 해당 플레이어의 컵 드는 애니메이션 멀티캐스트 알림
 	UE_LOG(LogTemp, Warning, TEXT("Player %s is checking dice"), *GetName());
+	Multicast_PlayCheckDiceAnimation();
+}
+
+void ALiarsDicePlayerController::Multicast_PlayCheckDiceAnimation_Implementation()
+{
+	// 모든 클라이언트에서 해당 플레이어 캐릭터의 애니메이션 블루프린트 트리거
+	// (블루프린트에서 OnPlayCheckDiceAnimation 이벤트로 구현 예정)
+	UE_LOG(LogTemp, Warning, TEXT("Multicast: Play check dice animation for %s"), *GetName());
 }
 
 void ALiarsDicePlayerController::Server_PlaceBet_Implementation(int32 Quantity, int32 Value)
