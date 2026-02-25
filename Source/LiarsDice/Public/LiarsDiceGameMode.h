@@ -17,19 +17,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float TableRadius;
 
-	/** 플레이어들의 위치 데이터를 저장하는 구조체 */
-	USTRUCT(BlueprintType)
-	struct FSeatInfo
-	{
-		GENERATED_BODY()
-
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector Location;
-
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FRotator Rotation;
-	};
-
 	/** 플레이어 인원수에 따른 좌석 정보 계산 */
 	UFUNCTION(BlueprintCallable, Category = "GameFlow")
 	TArray<FSeatInfo> CalculateSeatPositions(int32 PlayerCount);

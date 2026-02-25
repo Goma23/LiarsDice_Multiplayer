@@ -34,3 +34,20 @@ struct FLiarsBetInfo
 		: Quantity(0), Value(0), Better(nullptr)
 	{}
 };
+
+/** 플레이어들의 위치 데이터를 저장하는 구조체 */
+USTRUCT(BlueprintType)
+struct FSeatInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator Rotation;
+
+	FSeatInfo()
+		: Location(FVector::ZeroVector), Rotation(FRotator::ZeroRotator)
+	{}
+};

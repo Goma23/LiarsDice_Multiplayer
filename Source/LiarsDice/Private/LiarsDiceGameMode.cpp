@@ -29,7 +29,7 @@ void ALiarsDiceGameMode::CheckAllPlayersReady()
 	// 인원 체크 로직 (최고 2명) 후 MiniGame_DetermineOrder 상태로 전환 예정
 }
 
-TArray<ALiarsDiceGameMode::FSeatInfo> ALiarsDiceGameMode::CalculateSeatPositions(int32 PlayerCount)
+TArray<FSeatInfo> ALiarsDiceGameMode::CalculateSeatPositions(int32 PlayerCount)
 {
 	TArray<FSeatInfo> Result;
 	if (PlayerCount < 2) return Result;
