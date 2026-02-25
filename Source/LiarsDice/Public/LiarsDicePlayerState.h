@@ -16,8 +16,13 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
-	TArray<int32> DiceValues;
-
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
 	int32 RemainingDiceCount;
+
+	/** 미니게임(순서 정하기)에서 굴린 숫자 */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
+	int32 MiniGameRollValue;
+
+	/** 서버에서 주사위를 굴립니다. */
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GameRules")
+	void Server_RollMiniGameDie();
 };

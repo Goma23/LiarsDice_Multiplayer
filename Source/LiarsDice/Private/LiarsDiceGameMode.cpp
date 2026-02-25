@@ -21,7 +21,66 @@ void ALiarsDiceGameMode::SetCurrentGameState(ELiarsDiceGameState NewState)
 	{
 		GS->GameState = NewState;
 		UE_LOG(LogTemp, Warning, TEXT("Game State Changed to: %d"), (int32)NewState);
+
+		if (NewState == ELiarsDiceGameState::MiniGame_DetermineOrder)
+		{
+			MiniGameTiedPlayers = JoinedPlayers; // 초기에는 모든 플레이어가 대상
+			// 클라이언트에 미니게임 UI 표시 알림 로직 추가 예정
+		}
 	}
+}
+
+void ALiarsDiceGameMode::ProcessMiniGameResults()
+{
+	if (MiniGameTiedPlayers.Num() == 0) return;
+
+	int32 MaxRoll = -1;
+	TArray<APlayerController*> HighRollers;
+
+	for (APlayerController* PC : MiniGameTiedPlayers)
+	{
+		if (ALiarsDicePlayerState* PS = PC->GetPlayerState<ALiarsDicePlayerState>())
+		{
+			if (PS->MiniGameRollValue > MaxRoll)
+			{
+				MaxRoll = PS->MiniGameRollValue;
+				HighRollers.Empty();
+				HighRollers.Add(PC);
+			}
+			else if (PS->MiniGameRollValue == MaxRoll)
+			{
+				HighRollers.Add(PC);
+			}
+		}
+	}
+
+	if (HighRollers.Num() == 1)
+	{
+		// 한 명의 승자 확정
+		SetOrderAuthority(HighRollers[0]);
+	}
+	else if (HighRollers.Num() > 1)
+	{
+		// 동점자끼리 재경기
+		MiniGameTiedPlayers = HighRollers;
+		UE_LOG(LogTemp, Warning, TEXT("MiniGame Tie! Re-rolling for %d players"), HighRollers.Num());
+		// 클라이언트에 재경기 알림 로직 추가 예정
+	}
+}
+
+void ALiarsDiceGameMode::SetOrderAuthority(APlayerController* Winner)
+{
+	UE_LOG(LogTemp, Warning, TEXT("MiniGame Winner: %s. Awaiting direction choice."), *Winner->GetName());
+	// Winner 클라이언트에 방향 선택 UI(시계/반시계) 활성화 RPC 전송 로직 필요
+}
+
+void ALiarsDiceGameMode::Server_SetGameDirection_Implementation(bool bIsClockwise)
+{
+	bClockwise = bIsClockwise;
+	UE_LOG(LogTemp, Warning, TEXT("Game Direction Set: %s"), bIsClockwise ? TEXT("Clockwise") : TEXT("Counter-Clockwise"));
+	
+	SetCurrentGameState(ELiarsDiceGameState::MixingDice);
+	// 본 게임 주사위 섞기 단계로 진입
 }
 
 void ALiarsDiceGameMode::CheckAllPlayersReady()

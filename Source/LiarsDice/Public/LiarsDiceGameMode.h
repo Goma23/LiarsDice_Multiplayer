@@ -46,4 +46,21 @@ public:
 
 	/** 모든 플레이어를 계산된 위치로 재배치합니다. */
 	void RedistributePlayers();
+
+	/** 미니게임 결과 집계 */
+	void ProcessMiniGameResults();
+
+	/** 순서 결정권을 가진 플레이어 설정 */
+	void SetOrderAuthority(APlayerController* Winner);
+
+	/** 게임 진행 방향 설정 (시계/반시계) */
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GameFlow")
+	void Server_SetGameDirection(bool bIsClockwise);
+
+private:
+	/** 미니게임 동점자 목록 */
+	TArray<APlayerController*> MiniGameTiedPlayers;
+	
+	/** 게임 방향 (true: 시계, false: 반시계) */
+	bool bClockwise;
 };
