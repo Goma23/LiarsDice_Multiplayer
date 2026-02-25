@@ -21,6 +21,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameFlow")
 	TArray<FSeatInfo> CalculateSeatPositions(int32 PlayerCount);
 
+	/** 현재 게임에 참여 중인 플레이어 목록 */
+	UPROPERTY(BlueprintReadOnly, Category = "GameFlow")
+	TArray<APlayerController*> JoinedPlayers;
+
+	/** 각 플레이어에게 할당된 좌석 정보 */
+	UPROPERTY(BlueprintReadOnly, Category = "GameFlow")
+	TMap<APlayerController*, FSeatInfo> PlayerSeatMap;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -31,4 +39,11 @@ public:
 	/** 모든 플레이어의 연결이 완료되었는지 확인합니다. */
 	UFUNCTION(BlueprintCallable, Category = "GameFlow")
 	void CheckAllPlayersReady();
+
+	/** 플레이어 접속 시 호출되는 가상 함수 재정의 */
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* Exiting) override;
+
+	/** 모든 플레이어를 계산된 위치로 재배치합니다. */
+	void RedistributePlayers();
 };

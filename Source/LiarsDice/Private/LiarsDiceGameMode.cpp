@@ -26,7 +26,54 @@ void ALiarsDiceGameMode::SetCurrentGameState(ELiarsDiceGameState NewState)
 
 void ALiarsDiceGameMode::CheckAllPlayersReady()
 {
-	// 인원 체크 로직 (최고 2명) 후 MiniGame_DetermineOrder 상태로 전환 예정
+	if (JoinedPlayers.Num() >= 2)
+	{
+		SetCurrentGameState(ELiarsDiceGameState::MiniGame_DetermineOrder);
+	}
+}
+
+void ALiarsDiceGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	if (NewPlayer)
+	{
+		JoinedPlayers.AddUnique(NewPlayer);
+		RedistributePlayers();
+		CheckAllPlayersReady();
+	}
+}
+
+void ALiarsDiceGameMode::Logout(AController* Exiting)
+{
+	if (APlayerController* PC = Cast<APlayerController>(Exiting))
+	{
+		JoinedPlayers.Remove(PC);
+		PlayerSeatMap.Remove(PC);
+		RedistributePlayers();
+	}
+
+	Super::Logout(Exiting);
+}
+
+void ALiarsDiceGameMode::RedistributePlayers()
+{
+	int32 PlayerCount = JoinedPlayers.Num();
+	if (PlayerCount < 1) return;
+
+	TArray<FSeatInfo> Seats = CalculateSeatPositions(PlayerCount);
+	PlayerSeatMap.Empty();
+
+	for (int32 i = 0; i < PlayerCount; ++i)
+	{
+		if (JoinedPlayers.IsValidIndex(i) && Seats.IsValidIndex(i))
+		{
+			PlayerSeatMap.Add(JoinedPlayers[i], Seats[i]);
+			
+			// 실제 폰(Character)의 위치를 이동시키는 로직은 폰 생성 이후 추가 예정
+			UE_LOG(LogTemp, Warning, TEXT("Assigned Player %d to Location: %s"), i, *Seats[i].Location.ToString());
+		}
+	}
 }
 
 TArray<FSeatInfo> ALiarsDiceGameMode::CalculateSeatPositions(int32 PlayerCount)
