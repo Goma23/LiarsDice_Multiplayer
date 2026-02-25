@@ -6,7 +6,8 @@ public class LiarsDiceEditorTarget : TargetRules
 	public LiarsDiceEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V5;
+		DefaultBuildSettings = BuildSettingsVersion.V6;
+		BuildEnvironment = TargetBuildEnvironment.Unique;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 		ExtraModuleNames.Add("LiarsDice");
 	}
