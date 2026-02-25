@@ -16,6 +16,9 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
+	TArray<int32> DiceValues;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
 	int32 RemainingDiceCount;
 
 	/** 미니게임(순서 정하기)에서 굴린 숫자 */
