@@ -45,6 +45,9 @@ protected:
 	/** 현재 주사위를 확인 중인지 여부 */
 	bool bIsCheckingDice;
 
+	/** 결과 확인 중인지 여부 (탑다운 뷰) */
+	bool bIsShowingResults;
+
 	/** 카메라 FOV 보간 목표값 */
 	float TargetFOV;
 	float DefaultFOV;

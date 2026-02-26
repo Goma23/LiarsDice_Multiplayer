@@ -149,12 +149,15 @@ void ALiarsDiceGameMode::ResolveMatch()
 	{
 		if (ALiarsDicePlayerState* PS = PC->GetPlayerState<ALiarsDicePlayerState>())
 		{
-			for (int32 DiceVal : PS->DiceValues)
+			PS->HighlightedDiceIndices.Empty();
+			for (int32 i = 0; i < PS->DiceValues.Num(); ++i)
 			{
-				// 1은 항상 와일드카드 (단, 베팅값이 1일 때는 제외하나 룰상 1은 직접 베팅 불가능)
+				int32 DiceVal = PS->DiceValues[i];
+				// 1은 항상 와일드카드
 				if (DiceVal == BetValue || DiceVal == 1)
 				{
 					TotalCount++;
+					PS->HighlightedDiceIndices.Add(i); // 금빛 하이라이트 대상 추가
 				}
 			}
 		}

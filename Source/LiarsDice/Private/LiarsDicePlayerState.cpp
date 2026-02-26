@@ -13,6 +13,7 @@ void ALiarsDicePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(ALiarsDicePlayerState, DiceValues);
 	DOREPLIFETIME(ALiarsDicePlayerState, RemainingDiceCount);
 	DOREPLIFETIME(ALiarsDicePlayerState, MiniGameRollValue);
+	DOREPLIFETIME(ALiarsDicePlayerState, HighlightedDiceIndices);
 }
 
 void ALiarsDicePlayerState::Server_RollMiniGameDie_Implementation()

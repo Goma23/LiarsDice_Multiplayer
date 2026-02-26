@@ -25,6 +25,10 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
 	int32 MiniGameRollValue;
 
+	/** 하이라이트 표시할 주사위 인덱스 (결과 확인용) */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
+	TArray<int32> HighlightedDiceIndices;
+
 	/** 서버에서 주사위를 굴립니다. */
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GameRules")
 	void Server_RollMiniGameDie();
