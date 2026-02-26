@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "LiarsDiceTypes.h"
+#include "DrawDebugHelpers.h"
 #include "LiarsDiceGameMode.generated.h"
 
 UCLASS()
@@ -46,6 +47,12 @@ public:
 
 	/** 모든 플레이어를 계산된 위치로 재배치합니다. */
 	void RedistributePlayers();
+
+	/** 디버그용 시각화 로직 (뷰포트에서 확인 가능) */
+	void DrawDebugSeating();
+
+	/** 플레이어 위치에 임시 컵 모델을 스폰합니다. */
+	void SpawnPlaceholderAssets();
 
 	/** 플레이어의 베팅 요청을 처리합니다. */
 	void HandleBet(APlayerController* Player, int32 Quantity, int32 Value);

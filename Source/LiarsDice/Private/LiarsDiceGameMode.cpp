@@ -293,11 +293,39 @@ void ALiarsDiceGameMode::RedistributePlayers()
 		if (JoinedPlayers.IsValidIndex(i) && Seats.IsValidIndex(i))
 		{
 			PlayerSeatMap.Add(JoinedPlayers[i], Seats[i]);
-			
-			// 실제 폰(Character)의 위치를 이동시키는 로직은 폰 생성 이후 추가 예정
 			UE_LOG(LogTemp, Warning, TEXT("Assigned Player %d to Location: %s"), i, *Seats[i].Location.ToString());
 		}
 	}
+
+	DrawDebugSeating();
+}
+
+void ALiarsDiceGameMode::DrawDebugSeating()
+{
+	FlushDebugStrings(GetWorld());
+	
+	for (auto& Elem : PlayerSeatMap)
+	{
+		FSeatInfo Seat = Elem.Value;
+		
+		// 좌석 위치에 금색 구체 그리기
+		DrawDebugSphere(GetWorld(), Seat.Location, 50.0f, 12, FColor::Yellow, false, 10.0f);
+		
+		// 바라보는 방향에 화살표 그리기
+		DrawDebugDirectionalArrow(GetWorld(), Seat.Location, Seat.Location + Seat.Rotation.Vector() * 100.0f, 50.0f, FColor::Red, false, 10.0f);
+		
+		// 플레이어 이름 표시
+		if (Elem.Key)
+		{
+			DrawDebugString(GetWorld(), Seat.Location + FVector(0, 0, 100), Elem.Key->GetName(), nullptr, FColor::White, 10.0f);
+		}
+	}
+}
+
+void ALiarsDiceGameMode::SpawnPlaceholderAssets()
+{
+	// 실제 컵/주사위 스태틱 메시 액터를 스폰하는 로직 (에셋 준비 후 구현)
+	UE_LOG(LogTemp, Warning, TEXT("Spawning Placeholder Assets at all seats..."));
 }
 
 TArray<FSeatInfo> ALiarsDiceGameMode::CalculateSeatPositions(int32 PlayerCount)
