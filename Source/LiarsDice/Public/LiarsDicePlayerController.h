@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "LiarsDiceTypes.h"
 #include "LiarsDicePlayerController.generated.h"
 
 UCLASS()
