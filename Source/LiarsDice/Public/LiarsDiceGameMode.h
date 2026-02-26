@@ -54,6 +54,9 @@ public:
 	/** 플레이어 위치에 임시 컵 모델을 스폰합니다. */
 	void SpawnPlaceholderAssets();
 
+	/** 월드에서 테이블 액터를 찾아 반환합니다. */
+	class ALiarsDiceTable* FindTableActor() const;
+
 	/** 플레이어의 베팅 요청을 처리합니다. */
 	void HandleBet(APlayerController* Player, int32 Quantity, int32 Value);
 

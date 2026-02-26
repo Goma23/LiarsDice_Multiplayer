@@ -1,6 +1,8 @@
 #include "LiarsDiceGameMode.h"
 #include "LiarsDiceGameState.h"
 #include "LiarsDicePlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "LiarsDiceTable.h"
 
 ALiarsDiceGameMode::ALiarsDiceGameMode()
 {
@@ -336,6 +338,20 @@ TArray<FSeatInfo> ALiarsDiceGameMode::CalculateSeatPositions(int32 PlayerCount)
 	TArray<FSeatInfo> Result;
 	if (PlayerCount < 2) return Result;
 
+	// 월드에 배치된 테이블 액터가 있는지 확인
+	if (ALiarsDiceTable* Table = FindTableActor())
+	{
+		for (int32 i = 0; i < PlayerCount; ++i)
+		{
+			FTransform SeatTransform = Table->GetSeatTransform(i);
+			FSeatInfo NewSeat;
+			NewSeat.Location = SeatTransform.GetLocation();
+			NewSeat.Rotation = SeatTransform.Rotator();
+			Result.Add(NewSeat);
+		}
+		return Result;
+	}
+
 	float AngleStep = 360.0f / PlayerCount;
 	
 	// 2명일 경우 서로 마주보게 (180도), 3명 이상은 다각형 형태
@@ -355,4 +371,10 @@ TArray<FSeatInfo> ALiarsDiceGameMode::CalculateSeatPositions(int32 PlayerCount)
 	}
 
 	return Result;
+}
+
+ALiarsDiceTable* ALiarsDiceGameMode::FindTableActor() const
+{
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ALiarsDiceTable::StaticClass());
+	return Cast<ALiarsDiceTable>(FoundActor);
 }
