@@ -1,4 +1,6 @@
 #include "LiarsDiceGameState.h"
+#include "Net/UnrealNetwork.h"
+#include "LiarsDicePlayerController.h"
 
 ALiarsDiceGameState::ALiarsDiceGameState()
 {
