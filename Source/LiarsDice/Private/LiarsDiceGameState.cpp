@@ -14,3 +14,12 @@ void ALiarsDiceGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(ALiarsDiceGameState, CurrentBet);
 	DOREPLIFETIME(ALiarsDiceGameState, CurrentTurnIndex);
 }
+
+void ALiarsDiceGameState::OnRep_GameState()
+{
+	// 클라이언트 측에서 상태 변경 시 로컬 연출 트리거
+	if (ALiarsDicePlayerController* PC = Cast<ALiarsDicePlayerController>(GetWorld()->GetFirstPlayerController()))
+	{
+		PC->OnGameStateChanged(GameState);
+	}
+}

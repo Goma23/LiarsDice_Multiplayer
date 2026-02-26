@@ -39,6 +39,20 @@ void ALiarsDicePlayerController::StopCheckingDice()
 	TargetFOV = DefaultFOV;
 }
 
+void ALiarsDicePlayerController::OnGameStateChanged(ELiarsDiceGameState NewState)
+{
+	if (NewState == ELiarsDiceGameState::RevealResults)
+	{
+		bIsShowingResults = true;
+		TargetFOV = 70.0f; // 탑다운 결과 확인용 FOV
+	}
+	else if (NewState == ELiarsDiceGameState::MixingDice || NewState == ELiarsDiceGameState::BettingRound)
+	{
+		bIsShowingResults = false;
+		TargetFOV = DefaultFOV;
+	}
+}
+
 void ALiarsDicePlayerController::Server_OnCheckDiceInteraction_Implementation()
 {
 	// 서버에서 모든 클라이언트에 해당 플레이어의 컵 드는 애니메이션 멀티캐스트 알림
@@ -87,6 +101,18 @@ void ALiarsDicePlayerController::UpdateCamera(float DeltaTime)
 		{
 			float NewFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, ZoomSpeed);
 			PlayerCameraManager->SetFOV(NewFOV);
+		}
+
+		if (bIsShowingResults)
+		{
+			// 탑다운 90도 뷰로 부드럽게 회전 및 위치 보간 logic
+			// (테이블 중앙 C+0,0,500 정도의 위치로 카메라 이동 유도)
+			FRotator TargetRot = FRotator(-90.0f, 0.0f, 0.0f);
+			FRotator CurrentRot = GetControlRotation();
+			if (!CurrentRot.Equals(TargetRot, 0.1f))
+			{
+				SetControlRotation(FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, ZoomSpeed * 0.5f));
+			}
 		}
 	}
 }

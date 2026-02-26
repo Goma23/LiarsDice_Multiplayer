@@ -16,8 +16,11 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
+	UPROPERTY(ReplicatedUsing = OnRep_GameState, BlueprintReadOnly, Category = "GameRules")
 	ELiarsDiceGameState GameState;
+
+	UFUNCTION()
+	void OnRep_GameState();
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameRules")
 	FLiarsBetInfo CurrentBet;

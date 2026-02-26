@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameFlow")
 	void StopCheckingDice();
 
+	/** 게임 상태 변경에 따른 로컬 연출 처리 */
+	void OnGameStateChanged(ELiarsDiceGameState NewState);
+
 	/** 서버에 주사위 확인 애니메이션 동기화 요청 */
 	UFUNCTION(Server, Reliable, Category = "GameFlow")
 	void Server_OnCheckDiceInteraction();
