@@ -312,15 +312,15 @@ void ALiarsDiceGameMode::DrawDebugSeating()
 		FSeatInfo Seat = Elem.Value;
 		
 		// 좌석 위치에 금색 구체 그리기
-		DrawDebugSphere(GetWorld(), Seat.Location, 50.0f, 12, FColor::Yellow, false, 10.0f);
+		DrawDebugSphere(GetWorld(), Seat.Location, 50.0f, 12, FColor::Yellow, false, 60.0f);
 		
 		// 바라보는 방향에 화살표 그리기
-		DrawDebugDirectionalArrow(GetWorld(), Seat.Location, Seat.Location + Seat.Rotation.Vector() * 100.0f, 50.0f, FColor::Red, false, 10.0f);
+		DrawDebugDirectionalArrow(GetWorld(), Seat.Location, Seat.Location + Seat.Rotation.Vector() * 100.0f, 50.0f, FColor::Red, false, 60.0f);
 		
 		// 플레이어 이름 표시
 		if (Elem.Key)
 		{
-			DrawDebugString(GetWorld(), Seat.Location + FVector(0, 0, 100), Elem.Key->GetName(), nullptr, FColor::White, 10.0f);
+			DrawDebugString(GetWorld(), Seat.Location + FVector(0, 0, 100), Elem.Key->GetName(), nullptr, FColor::White, 60.0f);
 		}
 	}
 }
